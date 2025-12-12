@@ -8,7 +8,7 @@ import { ReceiptsEntity} from './database/entities/receipts.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost', 
+      host: process.env.POSTGRES_HOST || 'postgres',
       port: 5432,
       username: 'postgres', 
       password: 'postgres', 
