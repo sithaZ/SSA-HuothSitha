@@ -3,6 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReceiptsModule } from './receipts/receipts.module';
 import { OrdersModule } from './orders/orders.module';
 import { ReceiptsEntity} from './database/entities/receipts.entity';
+import { PaymentsModule } from './payments/payments.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { CoreModule } from './core/core.module';
+
 
 @Module({
   imports: [
@@ -16,8 +20,11 @@ import { ReceiptsEntity} from './database/entities/receipts.entity';
       entities: [ReceiptsEntity], 
       synchronize: true, 
     }),
+    PaymentsModule,
     OrdersModule,
     ReceiptsModule,
+    NotificationsModule,
+    CoreModule,
   ],
 })
 export class AppModule {}
