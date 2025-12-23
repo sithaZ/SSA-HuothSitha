@@ -1,13 +1,12 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { NotificationsService } from './notifications.service';
+import { NotificationsService } from '../notifications/notification.service';
 
 @Controller('notifications')
-export class NotificationsController {
+export class TaskController{
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post()
   sendNotification(@Body() body: { event: string; payload: any }) {
-    // This calls the notify method we created in the service
-    return this.notificationsService.notify(body.event, body.payload);
+    return this.notificationsService.notify('tasks', body.event, body.payload);
   }
 }

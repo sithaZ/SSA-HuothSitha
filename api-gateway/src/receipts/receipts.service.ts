@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ReceiptsEntity } from '../database/entities/receipts.entity';
 import { CreateReceiptDto } from './dto/create-receipt.dto';
 import { UpdateReceiptDto } from './dto/update-receipt.dto';
-import { NotificationsService } from '../notifications/notifications.service'; 
+import { NotificationsService } from '../notifications/notification.service'; 
 
 @Injectable()
 export class ReceiptsService {
@@ -32,8 +32,8 @@ export class ReceiptsService {
     });
     const saved = await this.receiptRepo.save(receipt);
 
-    
-    this.notifications.notify('receipt_created', {
+
+    this.notifications.notify('receipts', 'receipt_created', {
       receiptId: saved.receiptId,
       price: saved.price,
     });
@@ -48,12 +48,19 @@ export class ReceiptsService {
     if (dto.name !== undefined) receipt.name = dto.name;
     if (dto.price !== undefined) receipt.price = dto.price;
 
-    return this.receiptRepo.save(receipt);
-  }
+   const saved = await this.receiptRepo.save(receipt);
 
+   this.notifications.notify('receipts', 'receipt_updated', {
+      receiptId: saved.receiptId,
+      price: saved.price,
+    });
+     return saved;
+  }
+     
   async remove(receiptId: string) {
     const receipt = await this.findOne(receiptId);
     await this.receiptRepo.remove(receipt);
     return { deleted: true, receiptId };
   }
+
 }

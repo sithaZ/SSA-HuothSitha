@@ -4,7 +4,7 @@ import { ReceiptsModule } from './receipts/receipts.module';
 import { OrdersModule } from './orders/orders.module';
 import { ReceiptsEntity} from './database/entities/receipts.entity';
 import { PaymentsModule } from './payments/payments.module';
-import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationModule } from './notifications/notifications.module';
 import { CoreModule } from './core/core.module';
 
 
@@ -23,7 +23,11 @@ import { CoreModule } from './core/core.module';
     PaymentsModule,
     OrdersModule,
     ReceiptsModule,
-    NotificationsModule,
+    NotificationModule.forRoot({
+      appName: 'API-Gateway',
+      defaultChannel: 'log',
+      enable: true,
+    }),
     CoreModule,
   ],
 })

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PaymentsService } from 'src/payments/payments.service';
-import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationsService } from '../notifications/notification.service';
 @Injectable()
 
 export class OrdersService {
@@ -16,7 +16,7 @@ export class OrdersService {
     this.client.emit('order_created', '');
 
     
-    this.notifications.notify('order_created', {
+    this.notifications.notify('orders', 'order_created', {
       order: orderDto,
     });
 
