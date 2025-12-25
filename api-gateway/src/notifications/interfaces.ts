@@ -9,5 +9,6 @@ export interface NotificationModuleOptions {
 export interface NotificationFeatureOptions {
   featureName: string;
   prefix?: string;
+  enable?: boolean;
   channels?: NotificationChannel[];
 }

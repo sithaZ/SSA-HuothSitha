@@ -10,6 +10,12 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+    # ✅ CORRECT: Indented so it belongs to 'rabbitmq'
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   api-gateway:
     build: ./api-gateway
@@ -23,7 +29,9 @@ services:
       - ./api-gateway:/app
       - /app/node_modules
     depends_on:
-      - rabbitmq
+      # ✅ Wait for healthcheck
+      rabbitmq:
+        condition: service_healthy
 
   order-worker:
     build: ./order-worker
@@ -35,7 +43,10 @@ services:
       - ./order-worker:/app
       - /app/node_modules
     depends_on:
-      - rabbitmq
+      # ✅ Wait for healthcheck
+      rabbitmq:
+        condition: service_healthy
+
   postgres:
       image: postgres:16
       container_name: postgres

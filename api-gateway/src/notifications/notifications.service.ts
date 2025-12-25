@@ -19,7 +19,10 @@ export class NotificationsService {
   private getFeature(
     featureName: string,
   ): NotificationFeatureOptions | undefined {
-    return this.features.find((f) => f.featureName === featureName);
+    // Use lowercase to ensure 'orders' matches 'Orders'
+    return this.features.find(
+      (f) => f.featureName.toLowerCase() === featureName.toLowerCase(),
+    );
   }
 
   private resolveChannels(
@@ -35,8 +38,15 @@ export class NotificationsService {
       return { skipped: true, reason: 'notifications disabled' };
 
     const feature = this.getFeature(featureName);
-    const channels = this.resolveChannels(feature);
 
+    if (feature?.enable === false) {
+      return {
+        skipped: true,
+        reason: `notifications for ${featureName} are disabled`,
+      };
+    }
+
+    const channels = this.resolveChannels(feature);
     const prefix = feature?.prefix ?? `[${featureName.toUpperCase()}]`;
     const message = `${prefix} (${this.options.appName}) ${event}`;
 

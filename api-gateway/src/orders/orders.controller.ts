@@ -1,15 +1,17 @@
 import { Body, Controller, Post, Delete } from '@nestjs/common';
 import { OrdersService } from './orders.service';
+import { Notify } from 'src/notifications/notify.decorator';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  create(@Body() body: any) {
-    console.log('controller create');
-    return this.ordersService.createOrder(body);
+  @Notify('orders', 'order_created') 
+  async createOrder(@Body() dto: any) {
+    return this.ordersService.createOrder(dto);
   }
+
   @Delete()
   delete() {
     console.log('controller delete');

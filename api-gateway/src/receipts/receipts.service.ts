@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ReceiptsEntity } from '../database/entities/receipts.entity';
 import { CreateReceiptDto } from './dto/create-receipt.dto';
 import { UpdateReceiptDto } from './dto/update-receipt.dto';
-import { NotificationsService } from '../notifications/notification.service'; 
+import { NotificationsService } from '../notifications/notifications.service'; 
 
 @Injectable()
 export class ReceiptsService {

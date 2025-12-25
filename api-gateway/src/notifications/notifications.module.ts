@@ -1,30 +1,30 @@
-import { DynamicModule, Module, Global } from '@nestjs/common';
-import { NOTIFICATION_OPTIONS, NOTIFICATION_FEATURES } from './constants';
+import { DynamicModule, Module } from '@nestjs/common';
+import {
+  NOTIFICATION_FEATURE_OPTIONS,
+  NOTIFICATION_OPTIONS,
+} from './constants';
 import {
   NotificationModuleOptions,
   NotificationFeatureOptions,
-} from './interfaces';
-import { NotificationsService } from './notification.service';
-@Global()
-@Module({})
+} from './interfaces'; 
+import { NotificationsService } from './notifications.service';
+import { NotificationFeatureRegistrar } from './notifications-feature.registrar';
+import { NotificationsRegistryModule } from './notifications-registry.module';
+import { CoreModule } from '../core/core.module'; 
+
+@Module({
+  imports: [NotificationsRegistryModule, CoreModule], 
+})
 export class NotificationModule {
   static forRoot(options: NotificationModuleOptions): DynamicModule {
     return {
       module: NotificationModule,
+      global: true, 
       providers: [
-        {
-          provide: NOTIFICATION_OPTIONS,
-          useValue: options,
-        },
-
-        {
-          provide: NOTIFICATION_FEATURES,
-          useValue: [] as NotificationFeatureOptions[],
-        },
+        { provide: NOTIFICATION_OPTIONS, useValue: options },
         NotificationsService,
       ],
       exports: [NotificationsService],
-      global: true,
     };
   }
 
@@ -32,16 +32,12 @@ export class NotificationModule {
     return {
       module: NotificationModule,
       providers: [
-        {
-          provide: NOTIFICATION_FEATURES,
-
-          useFactory: (features: NotificationFeatureOptions[]) => {
-            return [...features, feature];
-          },
-          inject: [NOTIFICATION_FEATURES],
-        },
+      
+        { provide: NOTIFICATION_FEATURE_OPTIONS, useValue: feature },
+       
+        NotificationFeatureRegistrar,
       ],
-      exports: [NotificationsService],
+     exports: [NotificationFeatureRegistrar],
     };
   }
 }
