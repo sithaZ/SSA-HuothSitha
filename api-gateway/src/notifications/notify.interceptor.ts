@@ -18,7 +18,7 @@ export class NotifyInterceptor implements NestInterceptor {
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    // Read metadata set by @Notify decorator from the method handler
+
     const metadata = this.reflector.get<{ feature: string; event: string }>(
       NOTIFY_METADATA,
       context.getHandler(),

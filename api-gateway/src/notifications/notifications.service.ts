@@ -19,7 +19,7 @@ export class NotificationsService {
   private getFeature(
     featureName: string,
   ): NotificationFeatureOptions | undefined {
-    // Use lowercase to ensure 'orders' matches 'Orders'
+ 
     return this.features.find(
       (f) => f.featureName.toLowerCase() === featureName.toLowerCase(),
     );

@@ -7,7 +7,7 @@ export class NotificationsController {
 
   @Post()
   sendNotification(@Body() body: { featureName: string; event: string; payload: any }) {
-    // Delegates the logic to the service we built
+   
     return this.notificationsService.notify(body.featureName, body.event, body.payload);
   }
 }
