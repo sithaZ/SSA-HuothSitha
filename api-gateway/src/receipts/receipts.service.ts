@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+
 import { Repository } from 'typeorm';
 import { ReceiptsEntity } from '../database/entities/receipts.entity';
 import { CreateReceiptDto } from './dto/create-receipt.dto';
@@ -9,7 +9,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 @Injectable()
 export class ReceiptsService {
   constructor(
-    @InjectRepository(ReceiptsEntity)
+    @Inject('RECEIPTSENTITY_REPO')
     private readonly receiptRepo: Repository<ReceiptsEntity>,
     private readonly notifications: NotificationsService, 
   ) {}

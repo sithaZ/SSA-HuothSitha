@@ -1,4 +1,4 @@
-version: "3.8"
+
 
 services:
   rabbitmq:
@@ -10,7 +10,7 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
-    # ✅ CORRECT: Indented so it belongs to 'rabbitmq'
+  
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 5s
@@ -29,7 +29,7 @@ services:
       - ./api-gateway:/app
       - /app/node_modules
     depends_on:
-      # ✅ Wait for healthcheck
+    
       rabbitmq:
         condition: service_healthy
 
@@ -43,7 +43,7 @@ services:
       - ./order-worker:/app
       - /app/node_modules
     depends_on:
-      # ✅ Wait for healthcheck
+     
       rabbitmq:
         condition: service_healthy
 
