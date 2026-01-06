@@ -22,13 +22,25 @@ export class DateValidationPipe implements PipeTransform {
       );
     }
 
-    // 3. Check year
+    const day = Number(match[1]);
+    const month = Number(match[2]);
     const year = Number(match[3]);
-    if (year && year >= 2010) {
+
+    // 3. (NEW) Check for valid calendar date
+    const date = new Date(year, month - 1, day);
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      throw new BadRequestException('Invalid calendar date');
+    }
+
+    // 4. Check year (Must be < 2010)
+    if (year >= 2010) {
       throw new BadRequestException('Year must be less than 2010');
     }
 
-    // IMPORTANT: You must return the value so the controller receives it!
     return value;
   }
 }

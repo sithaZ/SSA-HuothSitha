@@ -5,10 +5,18 @@ import { OrdersService } from './orders.service';
 import { PaymentsModule } from 'src/payments/payments.module';
 import { NotificationModule } from '../notifications/notifications.module';
 import { ReceiptsModule } from 'src/receipts/receipts.module';
+import { CustomersModule } from 'src/modules/customers/customer.module'; 
 
 @Module({
   imports: [
+  
     forwardRef(() => PaymentsModule),
+
+    ReceiptsModule, 
+
+  
+    CustomersModule,
+
     NotificationModule.forFeature({
       featureName: 'Orders',
       prefix: '[ORDERS]',
@@ -30,5 +38,4 @@ import { ReceiptsModule } from 'src/receipts/receipts.module';
   providers: [OrdersService],
   exports: [OrdersService],
 })
-
 export class OrdersModule {}
