@@ -31,7 +31,19 @@ services:
         condition: service_healthy
       postgres:
         condition: service_started
-
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    command: npm run start:dev
+    ports:
+      - "3001:3000"
+    environment:
+      RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+    volumes:
+      - ./auth-service:/app
+      - /app/node_modules
+    depends_on:
+      - rabbitmq
   order-worker:
     build: ./order-worker
     container_name: order-worker
@@ -52,6 +64,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: order-worker
+    
     ports:
       - "5432:5432"
     volumes:
