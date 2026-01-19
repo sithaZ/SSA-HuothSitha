@@ -1,19 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Injectable, Logger } from '@nestjs/common';
-import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
-
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { PaymentsService } from 'src/payments/payments.service';
+import { NotificationsService } from '../notifications/notifications.service';
 @Injectable()
+
 export class OrdersService {
-  private readonly logger = new Logger(OrdersService.name);
-  private readonly processedOrders: any[] = [];
+  constructor(  
+    @Inject('ORDERS_SERVICE') private readonly client: ClientProxy,
+    private readonly paymentsService: PaymentsService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
- 
-
-  printAll(){
-    this.logger.log('Processed Orders: ' + JSON.stringify(this.processedOrders));
+  createOrder(orderDto: any) {
     
+    this.client.emit('order_created', '');
+
+    
+    // this.notifications.notify('orders', 'order_created', {
+    //   order: orderDto,
+    // });
+
+    return { status: 'Order accepted', order: orderDto };
+  }
+  deleteOrder() {
+    this.client.emit('order_deleted', {});
+    return { status: 'Order deletion requested' };
   }
 }
+

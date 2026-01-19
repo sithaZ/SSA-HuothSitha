@@ -1,15 +1,27 @@
-import { Controller } from '@nestjs/common';
-
-import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import { Body, Controller, Post, Delete } from '@nestjs/common';
+import { OrdersService } from './orders.service';
+import { Notify } from 'src/notifications/notify.decorator';
+import { VerifyCustomerPipe } from 'src/common/pipes/verify-customer.pipe';
+import { VerifyCustomerDto } from '../modules/customers/dto/verify-customer.dto';
 
 @Controller('orders')
 export class OrdersController {
-  @EventPattern('order_created')
-  async handleOrderCreated(@Payload() data: any, @Ctx() context: RmqContext) {
-    console.log('Order created event received:', data);
+  constructor(private readonly ordersService: OrdersService) {}
+
+  @Post()
+  @Notify('orders', 'order_created') 
+  async createOrder(@Body('customer', VerifyCustomerPipe)
+  customer: VerifyCustomerDto,
+   @Body()
+   dto: any) {
+    dto.customer = customer;
+    console.log('controller createOrder', customer.fullName);
+    return this.ordersService.createOrder(dto);
   }
-  @EventPattern('order_deleted')
-  async handleOrderDeleted(@Payload() data: any, @Ctx() context: RmqContext) {
-    console.log('Order deleted event received:', data);
+
+  @Delete()
+  delete() {
+    console.log('controller delete');
+    return this.ordersService.deleteOrder();
   }
 }
