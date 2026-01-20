@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -41,7 +43,7 @@ services:
       - "3001:3000"
     environment:
       RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
-      DB_HOST: postgres
+      DB_HOST: auth-db
       DB_PORT: 5432
       DB_USER: admin
       DB_PASS: admin
@@ -53,8 +55,10 @@ services:
       - ./auth-service:/app
       - /app/node_modules
     depends_on:
-      - rabbitmq
-      - auth-db
+      rabbitmq:
+        condition: service_healthy
+      auth-db:
+        condition: service_healthy
 
   order-worker:
     build: ./order-worker
@@ -62,6 +66,12 @@ services:
     command: npm run start:dev
     environment:
       RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+      # Added missing DB config so it connects to 'postgres' container instead of localhost
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: order-worker
     ports:
       - "3002:3000"
     volumes:
@@ -70,6 +80,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      postgres:
+        condition: service_started
 
   postgres:
     image: postgres:16
@@ -94,6 +106,11 @@ services:
       - "5433:5432"
     volumes:
       - auth_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d auth_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:

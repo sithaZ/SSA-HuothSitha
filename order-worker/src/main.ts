@@ -1,38 +1,28 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-// import { ValidationPipe } from '@nestjs/common';
-// import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { Transport } from '@nestjs/microservices/enums/transport.enum';
 import { MicroserviceOptions } from '@nestjs/microservices/interfaces/microservice-configuration.interface';
 
 async function bootstrap() {
-  // const app = await NestFactory.create(AppModule);
+  // 1. Create the HTTP Application first
+  const app = await NestFactory.create(AppModule);
 
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true,
-  //     forbidNonWhitelisted: true,
-  //     transform: true,
-  //   }),
-  // );
+  // 2. Connect the Microservice (RabbitMQ) to the HTTP App
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RABBITMQ_URL || 'amqp://rabbitmq:5672'],
+      queue: 'orders_queue',
+      queueOptions: { durable: false },
+    },
+  });
 
-  
-  // app.useGlobalInterceptors(new LoggingInterceptor());
+  // 3. Start the Microservice listeners
+  await app.startAllMicroservices();
 
-  // await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
-  // console.log(`Application is running on: ${await app.getUrl()}`);
-   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-      AppModule,
-      {
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RABBITMQ_URL || 'amqp://rabbitmq:5672'],
-          queue: 'orders_queue',
-          queueOptions: { durable: false },
-        },
-      },
-    );
-  
-    await app.listen();
+  // 4. Start the HTTP Server on port 3000
+  await app.startAllMicroservices();
+  await app.listen(3000);
+  console.log(`Order Worker is running on: ${await app.getUrl()}`);
 }
 bootstrap();
