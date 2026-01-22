@@ -4,10 +4,8 @@ import { Transport } from '@nestjs/microservices/enums/transport.enum';
 import { MicroserviceOptions } from '@nestjs/microservices/interfaces/microservice-configuration.interface';
 
 async function bootstrap() {
-  // 1. Create the HTTP Application first
   const app = await NestFactory.create(AppModule);
 
-  // 2. Connect the Microservice (RabbitMQ) to the HTTP App
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
@@ -17,12 +15,11 @@ async function bootstrap() {
     },
   });
 
-  // 3. Start the Microservice listeners
   await app.startAllMicroservices();
-
-  // 4. Start the HTTP Server on port 3000
-  await app.startAllMicroservices();
-  await app.listen(3000);
+  
+  // FIX: Listen on '0.0.0.0' so Docker maps it to your host machine correctly
+  await app.listen(3000, '0.0.0.0'); 
+  
   console.log(`Order Worker is running on: ${await app.getUrl()}`);
 }
 bootstrap();

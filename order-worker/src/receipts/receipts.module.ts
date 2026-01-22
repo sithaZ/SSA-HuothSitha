@@ -5,6 +5,8 @@ import { ReceiptsEntity } from '../database/entities/receipts.entity';
 import { NotificationModule } from '../notifications/notifications.module'; 
 import { DatabaseModule } from 'src/database/entities/database.module';
 
+import { ReceiptsResolver } from './receipts.resolver';
+
 @Module({
   imports: [
     DatabaseModule.forFeature([ReceiptsEntity]), 
@@ -14,6 +16,7 @@ import { DatabaseModule } from 'src/database/entities/database.module';
       channels: ['log', 'telegram'], })
   ],  
   controllers: [ReceiptsController],
-  providers: [ReceiptsService],
+  
+  providers: [ReceiptsService, ReceiptsResolver],
 })
 export class ReceiptsModule {}

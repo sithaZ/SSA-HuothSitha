@@ -4,7 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 
-// Import your CUSTOM DatabaseModule (This fixes the DATA_SOURCE error)
+import { GraphqlModule } from './graphql/graphql.module';
 import { DatabaseModule } from './database/entities/database.module';
 
 import { ReceiptsModule } from './receipts/receipts.module';
@@ -28,7 +28,8 @@ import { CustomersModule } from './modules/customers/customer.module';
     // 1. GraphQL Configuration (Schema First)
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      typePaths: [join(process.cwd(), 'src/**/*.graphql')], // Looks for your .graphql files
+      // typePaths: [join(process.cwd(), 'src/**/*.graphql')], // Looks for your .graphql files
+      autoSchemaFile: join(process.cwd(), 'src/graphql/schema.gql'),
       playground: true,
     }),
 
@@ -42,9 +43,10 @@ import { CustomersModule } from './modules/customers/customer.module';
     }),
 
     // Feature Modules
+    GraphqlModule,
     PaymentsModule,
     OrdersModule,
-    ReceiptsModule,
+    // ReceiptsModule,
     CustomersModule,
     NotificationModule.forRoot({
       appName: 'API-Gateway',

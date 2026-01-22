@@ -9,5 +9,7 @@ import { Category } from '../category/entities/category.entity';
   imports: [DatabaseModule.forFeature([Product, Category])],
   controllers: [ProductController],
   providers: [ProductService],
+  exports: [ProductService],
 })
+
 export class ProductModule {}

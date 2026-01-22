@@ -1,21 +1,25 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ReceiptsService } from './receipts.service';
+import { ReceiptType } from './dto/receipt.type'; 
 
-@Resolver('Receipt')
+@Resolver(() => ReceiptType)
 export class ReceiptsResolver {
   constructor(private readonly receiptsService: ReceiptsService) {}
 
-  @Query('receipts')
-  async getReceipts() {
+ 
+  @Query(() => [ReceiptType]) 
+  async receipts() {
     return this.receiptsService.findAll();
   }
 
-  @Query('receipt')
-  async getReceipt(@Args('receiptId') id: string) {
+  
+  @Query(() => ReceiptType)
+  async receipt(@Args('receiptId') id: string) {
     return this.receiptsService.findOne(id);
   }
 
-  @Mutation('createReceipt')
+  
+  @Mutation(() => ReceiptType)
   async createReceipt(
     @Args('name') name: string,
     @Args('price') price: number,
@@ -24,17 +28,8 @@ export class ReceiptsResolver {
     return this.receiptsService.create({ name, price, issuedAt });
   }
 
-  @Mutation('updateReceipt')
-  async updateReceipt(
-    @Args('receiptId') id: string,
-    @Args('name') name?: string,
-    @Args('price') price?: number,
-    @Args('issuedAt') issuedAt?: string,
-  ) {
-    return this.receiptsService.update(id, { name, price, issuedAt });
-  }
-
-  @Mutation('deleteReceipt')
+  
+  @Mutation(() => Boolean)
   async deleteReceipt(@Args('receiptId') id: string) {
     await this.receiptsService.remove(id);
     return true;
